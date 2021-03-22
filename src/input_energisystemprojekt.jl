@@ -9,11 +9,12 @@ folder = dirname(@__FILE__)
 
 #Sets
 REGION = [:DE, :SE, :DK]
-PLANT = [:Hydro, :Gas, ...] # Add all plants
+PLANT = [:Hydro, :Gas] # Add all plants
 HOUR = 1:8760
 
 #Parameters
 numregions = length(REGION)
+numhours = length(HOUR)
 
 timeseries = CSV.read("$folder\\TimeSeries.csv", DataFrame)
 wind_cf = AxisArray(ones(numregions, numhours), REGION, HOUR)
