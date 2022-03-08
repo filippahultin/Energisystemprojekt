@@ -1,5 +1,5 @@
 # energisystemprojekt
- Model structure to students in MVE346, Chalmers
+ Model structure to students in MVE347, Chalmers
  
  
 Two suggestions on how to use this model structure:
