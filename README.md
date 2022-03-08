@@ -1,8 +1,10 @@
 # energisystemprojekt
- Model structure to students in MVE347, Chalmers
+To students in MVE347, Chalmers.
+
+Code to get you started on the energisystem projekt.
  
  
-Two suggestions on how to use this model structure:
+Two suggestions on how to use this model structure/start-up code:
 
 1. Copy the URL (you find it under the green button "Code" in the top right corner) and then write dev and then the URL in the package manager mode in the Julia REPL. Like this: (@v1.7) pkg> dev URL
    - You can then write "julia> using energisystemprojekt" to use this package, and you change/develop the code in the files which you find in your .julia folder on your computer.  
