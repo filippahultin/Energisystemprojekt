@@ -13,4 +13,4 @@ Two suggestions on how to use this model structure/start-up code:
    - Then add your package by writing (@v1.7) pkg> add energisystemprojekt
    - You can then write "julia> using energisystemprojekt" to use this package, and you change/develop the code in the files which you find where you generated the package.  
 
-If you get stuck, dont hesitate to use the discussion forum in Canvas called "software issues", and I'll help you out. 
+If you get stuck, dont hesitate to use the discussion forum in Canvas called "software issues", and We'll help you out. 
