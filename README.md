@@ -1,11 +1,10 @@
 # Energy system project
-To students in MVE347, Chalmers.
+To students in MVE347, Chalmers. Code to get you started on the energy system project. 
 
-Code to get you started on the energy system project. You can find the project assignment here:
-[MVE347_energisystemprojekt.pdf](https://github.com/hannaekfalth/energisystemprojekt/files/8287173/MVE347_energisystemprojekt.pdf)
+You can find the project assignment here:
+[MVE347_Energy system project](https://github.com/hannaekfalth/energisystemprojekt/files/8287377/MVE347_energisystemprojekt.pdf)
 
-
-# Installation
+## Installation
 Install and run Julia. Then, in the julia REPL, enter the package manager mode by typing ] and copy/paste/type this at the prompt:
 
 ```(@v1.7) pkg> dev https://github.com/hannaekfalth/energisystemprojekt.git```
@@ -16,7 +15,7 @@ I also recomend that you use a package called [Revise](https://timholy.github.io
 
 ```(@v1.7) pkg> add Revise```
 
-# Usage
+## Usage
 Start by activating Revise by typing:
 
 ```julia> using Revise```
@@ -29,7 +28,7 @@ You can now use what is exported by the package (see line 9 in energisystemproje
 
 ```julia> runmodel()```
 
-## Developing the model
+### Developing the model
 To develop your model you write the code in .jl files in the src folder within the energisystemprojekt folder. And, if you are using Revise, the code changes will be activated immidiately. No need to restart julia or re-compile the energisystemprojekt package.  
 
 ## Stuck?
