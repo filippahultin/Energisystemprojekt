@@ -6,7 +6,7 @@ Code to get you started on the energy system project. You can find the project a
 
 
 # Installation
-Install and run Julia. Enter the package manager mode by typing ]. Then copy/paste/type this at the prompt:
+Install and run Julia. Then, in the julia REPL, enter the package manager mode by typing ] and copy/paste/type this at the prompt:
 
 ```(@v1.7) pkg> dev https://github.com/hannaekfalth/energisystemprojekt.git```
 
