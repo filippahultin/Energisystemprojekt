@@ -1,7 +1,7 @@
-# Energysystem project
+# Energy system project
 To students in MVE347, Chalmers.
 
-Code to get you started on the energisystem project.
+Code to get you started on the energy system project.
 
 # Installation
 Install and run Julia. Enter the package manager mode by typing ]. Then copy/paste/type this at the prompt:
@@ -25,7 +25,7 @@ You can now use what is exported by the package (see line 9 in energisystemproje
 ```julia> runmodel()```
 
 # Developing the model
-To 
+To develop your model you write the code in .jl files in the src folder within the energisystemprojekt folder. And, if you are using Revise, the code changes will be activated immidiately. No need to restart julia or re-compile the energisystemprojekt package.  
 
 # Stuck?
 If you get stuck, dont hesitate to use the discussion forum in Canvas called "software issues", and We'll help you out. 
