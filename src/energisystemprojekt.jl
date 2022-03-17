@@ -1,6 +1,6 @@
 # I den här filen bygger ni modellen. Notera att det är skrivet som en modul, dvs ett paket. 
 # Så när ni ska använda det, så skriver ni Using energisystemprojekt i er REPL, då får ni ut det ni
-# exporterat. Här har ni funktionen runmodel som exporteras.
+# exporterat. Se rad 9.
 
 module energisystemprojekt
 
@@ -28,7 +28,7 @@ function buildmodel(input)
 
     #Variable bounds
     for r in REGION, p in PLANT
-        setupperbound(Capacity[r, p], maxcap[r, p])
+        set_upper_bound(Capacity[r, p], maxcap[r, p])
     end
 
 
@@ -71,7 +71,7 @@ function runmodel()
         error("The model was not solved correctly.")
     end
 
-    Cost_result = objective_value(m)/1000000 
+    Cost_result = objective_value(m)/1000000 # M€
     Capacity_result = value.(Capacity)
 
 
