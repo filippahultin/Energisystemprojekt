@@ -1,8 +1,10 @@
 # Energy system project
 To students in MVE347, Chalmers. Code to get you started on the energy system project. 
 
+MVE347_Energy system project
+
 You can find the project assignment here:
-[MVE347_Energy system project](https://github.com/hannaekfalth/energisystemprojekt/files/8287377/MVE347_energisystemprojekt.pdf)
+[MVE347_Energy system project](https://github.com/hannaekfalth/energisystemprojekt/files/8358315/Energisystemprojekt-MMM.pdf)
 
 ## Installation
 Install and run Julia. Then, in the julia REPL, enter the package manager mode by typing ] and copy/paste/type this at the prompt:
