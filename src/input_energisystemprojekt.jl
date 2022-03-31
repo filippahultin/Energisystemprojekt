@@ -25,11 +25,11 @@ load = AxisArray(zeros(numregions, numhours), REGION, HOUR)
         load[r, :]=timeseries[:, "Load_"*"$r"]                                                           # [MWh]
     end
 
-
+myinf = 1e8
 maxcaptable = [                                                             # GW
         # PLANT      DE             SE              DK       
         :Hydro       0              14              0       
-        :Gas         Inf            Inf             Inf         
+        :Gas         myinf          myinf           myinf         
         ]
 
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
