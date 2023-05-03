@@ -11,7 +11,7 @@ This repo contains some code to get you started on the energy system project.
 
 ```dev https://github.com/hannaekfalth/energisystemprojekt.git```
 
-A folder named energisystemprojekt will be created localy, containing the sorce code (src) etc. It is in these files you should work with your model.
+A folder named energisystemprojekt will be created localy, containing the source code (src) etc. It is in these files you should work with your model. In package mode, write ```status``` to see where the energisystemprojekt i stored.
 
 I also recomend that you use a package called [Revise](https://timholy.github.io/Revise.jl/stable/), to avoid having to restart julia every time you make a change in your code. In the package manager mode type:
 
