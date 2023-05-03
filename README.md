@@ -9,9 +9,9 @@ This repo contains some code to get you started on the energy system project.
 ## Installation
 [Install and run Julia](https://julialang.org/downloads/). Then, in the julia REPL, enter the package manager mode by typing ] and copy/paste/type this at the prompt:
 
-```add https://github.com/hannaekfalth/energisystemprojekt.git```
+```dev https://github.com/hannaekfalth/energisystemprojekt.git```
 
-A folder named energisystemprojekt will be created localy at the current working directory (type pwd() to see where that is) containing the sorce code etc.
+A folder named energisystemprojekt will be created localy, containing the sorce code (src) etc. It is in these files you should work with your model.
 
 I also recomend that you use a package called [Revise](https://timholy.github.io/Revise.jl/stable/), to avoid having to restart julia every time you make a change in your code. In the package manager mode type:
 
