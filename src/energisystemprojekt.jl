@@ -4,6 +4,9 @@
 
 module energisystemprojekt
 
+#import Pkg
+#Pkg.add("Gurobi")
+
 using JuMP, AxisArrays, Gurobi, UnPack
 
 export runmodel
