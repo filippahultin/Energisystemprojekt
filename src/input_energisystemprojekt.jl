@@ -44,7 +44,7 @@ maxcaptable = [                                                             # GW
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
 
 lifetime = [                                                             # GW
-        # PLANT         #LT      
+        # PLANT         LT      
         :Hydro          80   
         :Gas            30   
         :Wind           25
@@ -54,10 +54,10 @@ lifetime = [                                                             # GW
         :Nuclear        50
         ]
 
-lifet = AxisArray(lifetime[:,2:end]'.*1000, PLANT) # MW
+lifet = AxisArray(lifetime[:,2:end], PLANT) # MW
 
 investment_cost = [                                                             # GW
-        # PLANT         #LT      
+        # PLANT         IC      
         :Hydro          0   
         :Gas            550   
         :Wind           1100
@@ -67,12 +67,64 @@ investment_cost = [                                                             
         :Nuclear        7700
         ]
 
-inv_cos = AxisArray(investment_cost[:,2:end]'.*1000, PLANT) # MW
+inv_cos = AxisArray(investment_cost[:,2:end], PLANT) # MW
+
+running_cost = [                                                             # GW
+        # PLANT         RC      
+        :Hydro          0.1   
+        :Gas            2   
+        :Wind           0.1
+        :Solar          0.1
+        :Batteries      0.1
+        :Transmission   0
+        :Nuclear        4
+        ]
+
+run_cos = AxisArray(running_cost[:,2:end], PLANT) # MW
+
+fuel_cost = [                                                             # GW
+        # PLANT         FC      
+        :Hydro          0
+        :Gas            22
+        :Wind           0
+        :Solar          0
+        :Batteries      0
+        :Transmission   0
+        :Nuclear        3.2
+        ]
+
+fu_cos = AxisArray(fuel_cost[:,2:end], PLANT) # MW
+
+efficiency = [                                                             # GW
+        # PLANT         EF 
+        :Hydro          1
+        :Gas            0.4
+        :Wind           1
+        :Solar          1
+        :Batteries      0.9
+        :Transmission   0.98
+        :Nuclear        0.4
+        ]
+
+eff = AxisArray(efficiency[:,2:end], PLANT) # MW
+
+emission = [                                                             # GW
+        # PLANT         EM
+        :Hydro          0
+        :Gas            0.202
+        :Wind           0
+        :Solar          0
+        :Batteries      0
+        :Transmission   0
+        :Nuclear        0
+        ]
+
+emis = AxisArray(emission[:,2:end], PLANT) # MW
 
 
 discountrate=0.05
 
 
-      return (; REGION, PLANT, HOUR, numregions, load, maxcap)
+      return (; REGION, PLANT, HOUR, numregions, load, maxcap, lifet, inv_cos, run_cos, fu_cos, eff, emis)
 
 end # read_input
