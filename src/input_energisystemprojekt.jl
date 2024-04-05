@@ -54,7 +54,8 @@ lifetime = [                                                             # GW
         :Nuclear        50
         ]
 
-lifet = AxisArray(lifetime[:,2:end], PLANT) # MW
+lifet = AxisArray(lifetime[:,2:end], PLANT) # years
+disc = map(discount, lifet) # AC/IC, how much to discount for each plant
 
 investment_cost = [                                                             # GW
         # PLANT         IC      
