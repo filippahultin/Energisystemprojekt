@@ -49,10 +49,16 @@ function buildmodel(input)
         SystemCost[r in REGION],
             Systemcost[r] >= 0 # sum of all annualized costs
         
+        # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
             load[r in REGION, h in HOUR] <= sum(Electricity[r in REGION, p in PLANT, h in HOUR] for p in PLANT)
         
+        # Constrain water levels
+        for h in HOUR[1:end-1]
+            StoredWater[h+1] <= StoredWater[h] + inflow[h] - Electricity[:SE, :Hydro, h]/eff[:Hydro]
         
+        # Tail constraint
+        # TODO
     end #constraints
 
 
