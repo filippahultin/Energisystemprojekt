@@ -28,8 +28,10 @@ function buildmodel(input)
 
     @variables m begin
 
-        Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h
-        Capacity[r in REGION, p in PLANT]                     >= 0        # MW
+        Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h usage
+        Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
+        StoredWater[h in HOUR]                                >= 0        # m^3?
+
 
     end #variables
 
@@ -46,7 +48,11 @@ function buildmodel(input)
 
         SystemCost[r in REGION],
             Systemcost[r] >= 0 # sum of all annualized costs
-    
+        
+        Consumption[r in REGION, p in PLANT],
+            # fix consumption
+            
+        
     end #constraints
 
 
