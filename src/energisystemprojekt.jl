@@ -30,8 +30,7 @@ function buildmodel(input)
 
         Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h usage
         Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
-        StoredWater[h in HOUR]                                >= 0        # m^3?
-
+        StoredWater[h in HOUR]                                >= 0        # MW?
 
     end #variables
 
@@ -54,11 +53,12 @@ function buildmodel(input)
             load[r in REGION, h in HOUR] <= sum(Electricity[r in REGION, p in PLANT, h in HOUR] for p in PLANT)
         
         # Constrain water levels
-        for h in HOUR[1:end-1]
-            StoredWater[h+1] <= StoredWater[h] + inflow[h] - Electricity[:SE, :Hydro, h]/eff[:Hydro]
+        WaterLevel[h in HOUR[1:end-1]],
+            StoredWater[h+1] <= StoredWater[h] + inflow[h] - Electricity[:SE, :Hydro, h]
         
         # Tail constraint
-        # TODO
+        TailLevel,
+            StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR) - Electricity[:SE, :Hydro, length(HOUR)]]
     end #constraints
 
 
