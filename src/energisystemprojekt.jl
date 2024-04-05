@@ -49,9 +49,9 @@ function buildmodel(input)
         SystemCost[r in REGION],
             Systemcost[r] >= 0 # sum of all annualized costs
         
-        Consumption[r in REGION, p in PLANT],
-            # fix consumption
-            
+        Consumption[r in REGION, h in HOUR],
+            load[r in REGION, h in HOUR] <= sum(Electricity[r in REGION, h in HOUR] for p in PLANT)
+        
         
     end #constraints
 
