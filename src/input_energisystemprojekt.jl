@@ -125,6 +125,6 @@ emis = AxisArray(emission[:,2:end], PLANT) # MW
 discountrate=0.05
 
 
-      return (; REGION, PLANT, HOUR, numregions, load, maxcap, lifet, inv_cos, run_cos, fu_cos, eff, emis)
+      return (; REGION, PLANT, HOUR, numregions, load, maxcap, disc, inv_cos, run_cos, fu_cos, eff, emis)
 
 end # read_input
