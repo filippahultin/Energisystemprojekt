@@ -4,12 +4,13 @@
 
 module energisystemprojekt
 
-# import Pkg
-# Pkg.add("Gurobi")
-# Pkg.add("AxisArrays")
-# Pkg.add("UnPack")
-# Pkg.add("CSV")
-# Pkg.add("DataFrames")
+#import Pkg
+#Pkg.add("Gurobi")
+#Pkg.add("AxisArrays")
+#Pkg.add("UnPack")
+#Pkg.add("CSV")
+#Pkg.add("DataFrames")
+# using energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack
 

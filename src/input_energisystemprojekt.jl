@@ -7,16 +7,18 @@ function read_input()
 println("\nReading Input Data...")
 folder = dirname(@__FILE__)
 
+filepath = joinpath(folder, "TimeSeries.csv")
+
 #Sets
 REGION = [:DE, :SE, :DK]
-PLANT = [:Hydro, :Gas] # Add all plants
+PLANT = [:Hydro, :Gas, :Wind, :Solar, :Batteries, :Transmission, :Nuclear] # Add all plants
 HOUR = 1:8760
 
 #Parameters
 numregions = length(REGION)
 numhours = length(HOUR)
 
-timeseries = CSV.read("$folder\\TimeSeries.csv", DataFrame)
+timeseries = CSV.read(filepath, DataFrame)
 wind_cf = AxisArray(ones(numregions, numhours), REGION, HOUR)
 load = AxisArray(zeros(numregions, numhours), REGION, HOUR)
  
@@ -27,9 +29,14 @@ load = AxisArray(zeros(numregions, numhours), REGION, HOUR)
 
 myinf = 1e8
 maxcaptable = [                                                             # GW
-        # PLANT      DE             SE              DK       
-        :Hydro       0              14              0       
-        :Gas         myinf          myinf           myinf         
+        # PLANT         DE             SE              DK       
+        :Hydro          0              14              0       
+        :Gas            myinf          myinf           myinf      
+        :Wind           180            280             90  
+        :Solar          460            75              60
+        :Batteries      myinf          myinf           myinf
+        :Transmission   myinf          myinf           myinf
+        :Nuclear        myinf          myinf           myinf
         ]
 
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
