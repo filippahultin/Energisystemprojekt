@@ -3,6 +3,8 @@
 
 using CSV, DataFrames
 
+discount(r, lt) = r/(1 - 1/((1+r)^lt))
+
 function read_input()
 println("\nReading Input Data...")
 folder = dirname(@__FILE__)
