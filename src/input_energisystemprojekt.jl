@@ -43,6 +43,32 @@ maxcaptable = [                                                             # GW
 
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
 
+lifetime = [                                                             # GW
+        # PLANT         #LT      
+        :Hydro          80   
+        :Gas            30   
+        :Wind           25
+        :Solar          25
+        :Batteries      10
+        :Transmission   50
+        :Nuclear        50
+        ]
+
+lifet = AxisArray(lifetime[:,2:end]'.*1000, PLANT) # MW
+
+investment_cost = [                                                             # GW
+        # PLANT         #LT      
+        :Hydro          0   
+        :Gas            550   
+        :Wind           1100
+        :Solar          600
+        :Batteries      150
+        :Transmission   2500
+        :Nuclear        7700
+        ]
+
+inv_cos = AxisArray(investment_cost[:,2:end]'.*1000, PLANT) # MW
+
 
 discountrate=0.05
 
