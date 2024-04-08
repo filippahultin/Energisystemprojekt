@@ -31,6 +31,7 @@ function buildmodel(input)
         Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h usage
         Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
         StoredWater[h in HOUR]                                >= 0        # MWh?
+        Systemcost[r in REGION]                               >= 0        # €
 
     end # variables
 
