@@ -10,6 +10,7 @@ module energisystemprojekt
 #Pkg.add("UnPack")
 #Pkg.add("CSV")
 #Pkg.add("DataFrames")
+#Pkg.add("Revise")
 # using energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack
@@ -30,16 +31,16 @@ function buildmodel(input)
 
         Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h usage
         Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
-        StoredWater[h in HOUR]                                >= 0        # MWh?
+        StoredWater[h in HOUR]                                >= 0        # MWh
         Systemcost[r in REGION]                               >= 0        # €
 
     end # variables
 
 
     # Variable bounds
-    for r in REGION, p in PLANT
-        set_upper_bound(Capacity[r, p], maxcap[r, p])
-    end
+    #for r in REGION, p in PLANT
+    #    set_upper_bound(Capacity[r, p], maxcap[r, p])
+    #end
 
 
     @constraints m begin
@@ -51,7 +52,7 @@ function buildmodel(input)
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
-            load[r in REGION, h in HOUR] <= sum(Electricity[r in REGION, p in PLANT, h in HOUR] for p in PLANT)
+            load[r, h] <= sum(Electricity[r, p, h] for p in PLANT)
         
         # Constrain water levels
         WaterLevel[h in HOUR[1:end-1]],
@@ -59,11 +60,11 @@ function buildmodel(input)
         
         # Tail constraint
         TailLevel,
-            StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR) - Electricity[:SE, :Hydro, length(HOUR)]]
+            StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR)] - first(Electricity[:SE, :Hydro, length(HOUR)])
         
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
-            Systemcost[r] >= sum(inv_cos[p]*disc[p]*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR)*(fu_cos[p] + run_cos[p]) for p in PLANT)
+            Systemcost[r] >= sum(inv_cos[p].*disc[p].*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR).*(fu_cos[p] + run_cos[p]) for p in PLANT)
 
     end #constraints
 

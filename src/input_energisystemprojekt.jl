@@ -48,18 +48,18 @@ maxcaptable = [                                                             # GW
 
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
 
-lifetime = [                                                             # GW
+lifet = Dict(                                                            # GW
         # PLANT         LT      
-        :Hydro          80   
-        :Gas            30   
-        :Wind           25
-        :Solar          25
-        :Batteries      10
-        :Transmission   50
-        :Nuclear        50
-        ]
+        :Hydro        =>   80   
+        :Gas          =>   30   
+        :Wind         =>   25
+        :Solar        =>   25
+        :Batteries    =>   10
+        :Transmission =>   50
+        :Nuclear      =>  50
+)
 
-lifet = AxisArray(lifetime[:,2:end], PLANT) # years
+#lifet = AxisArray(lifetime[:,2:end], PLANT) # years
 disc = map(discount, lifet) # AC/IC, how much to discount for each plant
 
 investment_cost = [                                                             # GW
