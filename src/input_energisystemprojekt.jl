@@ -48,7 +48,7 @@ maxcaptable = [                                                             # GW
 
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
 
-lifet = Dict(                                                            # GW
+lifet = Dict(                                                            # years
         # PLANT         LT      
         :Hydro        =>   80   
         :Gas          =>   30   
@@ -59,73 +59,62 @@ lifet = Dict(                                                            # GW
         :Nuclear      =>  50
 )
 
-#lifet = AxisArray(lifetime[:,2:end], PLANT) # years
 disc = map(discount, lifet) # AC/IC, how much to discount for each plant
 
-investment_cost = [                                                             # GW
+inv_cos = Dict(                                                             # MW
         # PLANT         IC      
-        :Hydro          0   
-        :Gas            550   
-        :Wind           1100
-        :Solar          600
-        :Batteries      150
-        :Transmission   2500
-        :Nuclear        7700
-        ]
+        :Hydro        =>  0   
+        :Gas          =>  550   
+        :Wind         =>  1100
+        :Solar        =>  600
+        :Batteries    =>  150
+        :Transmission =>  2500
+        :Nuclear      =>  7700
+)
 
-inv_cos = AxisArray(investment_cost[:,2:end], PLANT) # MW
-
-running_cost = [                                                             # GW
+run_cos = Dict(                                                             # MW
         # PLANT         RC      
-        :Hydro          0.1   
-        :Gas            2   
-        :Wind           0.1
-        :Solar          0.1
-        :Batteries      0.1
-        :Transmission   0
-        :Nuclear        4
-        ]
+        :Hydro        =>  0.1   
+        :Gas          =>  2   
+        :Wind         =>  0.1
+        :Solar        =>  0.1
+        :Batteries    =>  0.1
+        :Transmission =>   0
+        :Nuclear      =>  4
+)
 
-run_cos = AxisArray(running_cost[:,2:end], PLANT) # MW
-
-fuel_cost = [                                                             # GW
+fu_cos = Dict(                                                             # MW
         # PLANT         FC      
-        :Hydro          0
-        :Gas            22
-        :Wind           0
-        :Solar          0
-        :Batteries      0
-        :Transmission   0
-        :Nuclear        3.2
-        ]
+        :Hydro        =>  0
+        :Gas          =>  22
+        :Wind         =>  0
+        :Solar        =>  0
+        :Batteries    =>  0
+        :Transmission =>   0
+        :Nuclear      =>  3.2
+)
 
-fu_cos = AxisArray(fuel_cost[:,2:end], PLANT) # MW
-
-efficiency = [                                                             # GW
+eff = Dict(                                                             # MW
         # PLANT         EF 
-        :Hydro          1
-        :Gas            0.4
-        :Wind           1
-        :Solar          1
-        :Batteries      0.9
-        :Transmission   0.98
-        :Nuclear        0.4
-        ]
+        :Hydro        =>  1
+        :Gas          =>  0.4
+        :Wind         =>  1
+        :Solar        =>  1
+        :Batteries    =>  0.9
+        :Transmission =>   0.98
+        :Nuclear      =>  0.4
+)
 
-eff = AxisArray(efficiency[:,2:end], PLANT) # MW
-
-emission = [                                                             # GW
+emis = Dict(                                                             # MW
         # PLANT         EM
-        :Hydro          0
-        :Gas            0.202
-        :Wind           0
-        :Solar          0
-        :Batteries      0
-        :Transmission   0
-        :Nuclear        0
-        ]
-
-emis = AxisArray(emission[:,2:end], PLANT) # MW
+        :Hydro        =>  0
+        :Gas          =>  0.202
+        :Wind         =>  0
+        :Solar        =>  0
+        :Batteries    =>  0
+        :Transmission =>  0
+        :Nuclear      =>  0
+)
 
       return (; REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis)
 
