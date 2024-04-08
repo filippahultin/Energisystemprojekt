@@ -25,6 +25,9 @@ numhours = length(HOUR)
 timeseries = CSV.read(filepath, DataFrame)
 wind_cf = AxisArray(ones(numregions, numhours), REGION, HOUR)
 load = AxisArray(zeros(numregions, numhours), REGION, HOUR)
+inflow = AxisArray(zeros(numhours), HOUR)
+
+inflow[:] = timeseries[:, "Hydro_inflow"]
  
     for r in REGION
         wind_cf[r, :]=timeseries[:, "Wind_"*"$r"]                                                        # 0-1, share of installed cap
