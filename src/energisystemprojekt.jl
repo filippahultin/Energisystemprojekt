@@ -60,7 +60,7 @@ function buildmodel(input)
         
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
-            Systemcost[r] >= sum(inv_cos[p].*disc[p].*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR).*(fu_cos[p] + run_cos[p]) for p in PLANT)
+            Systemcost[r] >= sum(inv_cos[p].*disc[p].*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR).*(fu_cos[p]/eff[p] + run_cos[p]) for p in PLANT)
 
     end #constraints
 
