@@ -60,6 +60,10 @@ function buildmodel(input)
         TailLevel,
             StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR) - Electricity[:SE, :Hydro, length(HOUR)]]
         
+        # Ensure the system cost is what it claims to be
+        Objective[r in REGION],
+            Systemcost[r] >= sum(inv_cos[p]*disc[p]*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR)*(fu_cos[p] + run_cos[p]) for p in PLANT)
+
     end #constraints
 
 
