@@ -7,6 +7,16 @@ using CSV, DataFrames
 r = 0.05  # discountrate = r
 discount(lt) = r/(1 - 1/((1+r)^lt))
 
+function dmap(f, d)
+        newd = Dict()
+        
+        for (key, value) in d
+                newd[key] = f(value)
+        end
+
+        return newd
+end
+
 function read_input()
 println("\nReading Input Data...")
 folder = dirname(@__FILE__)
@@ -59,7 +69,7 @@ lifet = Dict(                                                            # years
         :Nuclear      =>  50
 )
 
-disc = map(discount, lifet) # AC/IC, how much to discount for each plant
+disc = dmap(discount, lifet) # AC/IC, how much to discount for each plant
 
 inv_cos = Dict(                                                             # MW
         # PLANT         IC      
