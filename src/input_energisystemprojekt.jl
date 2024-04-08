@@ -50,12 +50,12 @@ maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
 
 lifet = Dict(                                                            # years
         # PLANT         LT      
-        :Hydro        =>   80   
-        :Gas          =>   30   
-        :Wind         =>   25
-        :Solar        =>   25
-        :Batteries    =>   10
-        :Transmission =>   50
+        :Hydro        =>   80,   
+        :Gas          =>   30,   
+        :Wind         =>   25,
+        :Solar        =>   25,
+        :Batteries    =>   10,
+        :Transmission =>   50,
         :Nuclear      =>  50
 )
 
@@ -63,56 +63,56 @@ disc = map(discount, lifet) # AC/IC, how much to discount for each plant
 
 inv_cos = Dict(                                                             # MW
         # PLANT         IC      
-        :Hydro        =>  0   
-        :Gas          =>  550   
-        :Wind         =>  1100
-        :Solar        =>  600
-        :Batteries    =>  150
-        :Transmission =>  2500
+        :Hydro        =>  0,   
+        :Gas          =>  550,   
+        :Wind         =>  1100,
+        :Solar        =>  600,
+        :Batteries    =>  150,
+        :Transmission =>  2500,
         :Nuclear      =>  7700
 )
 
 run_cos = Dict(                                                             # MW
         # PLANT         RC      
-        :Hydro        =>  0.1   
-        :Gas          =>  2   
-        :Wind         =>  0.1
-        :Solar        =>  0.1
-        :Batteries    =>  0.1
-        :Transmission =>   0
+        :Hydro        =>  0.1,   
+        :Gas          =>  2,   
+        :Wind         =>  0.1,
+        :Solar        =>  0.1,
+        :Batteries    =>  0.1,
+        :Transmission =>   0,
         :Nuclear      =>  4
 )
 
 fu_cos = Dict(                                                             # MW
         # PLANT         FC      
-        :Hydro        =>  0
-        :Gas          =>  22
-        :Wind         =>  0
-        :Solar        =>  0
-        :Batteries    =>  0
-        :Transmission =>   0
+        :Hydro        =>  0,
+        :Gas          =>  22,
+        :Wind         =>  0,
+        :Solar        =>  0,
+        :Batteries    =>  0,
+        :Transmission =>   0,
         :Nuclear      =>  3.2
 )
 
 eff = Dict(                                                             # MW
         # PLANT         EF 
-        :Hydro        =>  1
-        :Gas          =>  0.4
-        :Wind         =>  1
-        :Solar        =>  1
-        :Batteries    =>  0.9
-        :Transmission =>   0.98
+        :Hydro        =>  1,
+        :Gas          =>  0.4,
+        :Wind         =>  1,
+        :Solar        =>  1,
+        :Batteries    =>  0.9,
+        :Transmission =>   0.98,
         :Nuclear      =>  0.4
 )
 
 emis = Dict(                                                             # MW
         # PLANT         EM
-        :Hydro        =>  0
-        :Gas          =>  0.202
-        :Wind         =>  0
-        :Solar        =>  0
-        :Batteries    =>  0
-        :Transmission =>  0
+        :Hydro        =>  0,
+        :Gas          =>  0.202,
+        :Wind         =>  0,
+        :Solar        =>  0,
+        :Batteries    =>  0,
+        :Transmission =>  0,
         :Nuclear      =>  0
 )
 
