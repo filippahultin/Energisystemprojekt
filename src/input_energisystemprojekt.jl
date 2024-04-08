@@ -51,8 +51,8 @@ maxcaptable = [                                                             # GW
         :Gas            myinf          myinf           myinf      
         :Wind           180            280             90  
         :Solar          460            75              60
-        :Batteries      myinf          myinf           myinf
-        :Transmission   myinf          myinf           myinf
+        :Batteries      0              0               0        # change all to myinf later
+        :Transmission   0              0               0        # change all to myinf later
         :Nuclear        myinf          myinf           myinf
         ]
 

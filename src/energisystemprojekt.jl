@@ -37,10 +37,10 @@ function buildmodel(input)
     end # variables
 
 
-    # Variable bounds
-    #for r in REGION, p in PLANT
-    #    set_upper_bound(Capacity[r, p], maxcap[r, p])
-    #end
+     #Variable bounds
+    for r in REGION, p in PLANT
+        set_upper_bound(Capacity[r, p], maxcap[r, p])
+    end
 
 
     @constraints m begin
@@ -99,6 +99,7 @@ function runmodel()
 
 
     println("Cost (M€): ", Cost_result)
+    println("Capacity: ", Capacity_result)
    
     nothing
 
