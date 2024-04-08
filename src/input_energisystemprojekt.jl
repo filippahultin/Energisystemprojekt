@@ -127,6 +127,6 @@ emission = [                                                             # GW
 
 emis = AxisArray(emission[:,2:end], PLANT) # MW
 
-      return (; REGION, PLANT, HOUR, numregions, load, maxcap, disc, inv_cos, run_cos, fu_cos, eff, emis)
+      return (; REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis)
 
 end # read_input
