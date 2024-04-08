@@ -55,12 +55,8 @@ function buildmodel(input)
             load[r, h] <= sum(Electricity[r, p, h] for p in PLANT)
         
         # Constrain water levels
-        WaterLevel[h in HOUR[1:end-1]],
-            StoredWater[h+1] <= StoredWater[h] + inflow[h] - Electricity[:SE, :Hydro, h]
-        
-        # Tail constraint
-        TailLevel,
-            StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR)] - first(Electricity[:SE, :Hydro, length(HOUR)])
+        WaterLevel[h in HOUR],
+            StoredWater[h] <= StoredWater[h>1 ? h-1 : length(HOUR)] + inflow[h>1 ? h-1 : length(HOUR)] - Electricity[:SE, :Hydro, h>1 ? h-1 : length(HOUR)]
         
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
