@@ -32,10 +32,10 @@ function buildmodel(input)
         Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
         StoredWater[h in HOUR]                                >= 0        # MWh?
 
-    end #variables
+    end # variables
 
 
-    #Variable bounds
+    # Variable bounds
     for r in REGION, p in PLANT
         set_upper_bound(Capacity[r, p], maxcap[r, p])
     end
@@ -59,6 +59,7 @@ function buildmodel(input)
         # Tail constraint
         TailLevel,
             StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR) - Electricity[:SE, :Hydro, length(HOUR)]]
+        
     end #constraints
 
 
