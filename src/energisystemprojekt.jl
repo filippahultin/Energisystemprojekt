@@ -28,13 +28,14 @@ function buildmodel(input)
 
     @variables m begin
 
-        Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h
-        Capacity[r in REGION, p in PLANT]                     >= 0        # MW
+        Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h usage
+        Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
+        StoredWater[h in HOUR]                                >= 0        # MWh?
 
-    end #variables
+    end # variables
 
 
-    #Variable bounds
+    # Variable bounds
     for r in REGION, p in PLANT
         set_upper_bound(Capacity[r, p], maxcap[r, p])
     end
@@ -46,7 +47,19 @@ function buildmodel(input)
 
         SystemCost[r in REGION],
             Systemcost[r] >= 0 # sum of all annualized costs
-    
+        
+        # Need to produce as much as is consumed!
+        Consumption[r in REGION, h in HOUR],
+            load[r in REGION, h in HOUR] <= sum(Electricity[r in REGION, p in PLANT, h in HOUR] for p in PLANT)
+        
+        # Constrain water levels
+        WaterLevel[h in HOUR[1:end-1]],
+            StoredWater[h+1] <= StoredWater[h] + inflow[h] - Electricity[:SE, :Hydro, h]
+        
+        # Tail constraint
+        TailLevel,
+            StoredWater[1] <= StoredWater[length(HOUR)] + inflow[length(HOUR) - Electricity[:SE, :Hydro, length(HOUR)]]
+        
     end #constraints
 
 

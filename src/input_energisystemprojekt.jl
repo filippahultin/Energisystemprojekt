@@ -3,7 +3,9 @@
 
 using CSV, DataFrames
 
-discount(r, lt) = r/(1 - 1/((1+r)^lt))
+
+r = 0.05  # discountrate = r
+discount(lt) = r/(1 - 1/((1+r)^lt))
 
 function read_input()
 println("\nReading Input Data...")
@@ -125,10 +127,6 @@ emission = [                                                             # GW
 
 emis = AxisArray(emission[:,2:end], PLANT) # MW
 
-
-discountrate=0.05
-
-
-      return (; REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis)
+      return (; REGION, PLANT, HOUR, numregions, load, maxcap, disc, inv_cos, run_cos, fu_cos, eff, emis)
 
 end # read_input
