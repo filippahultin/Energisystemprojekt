@@ -71,18 +71,18 @@ lifet = Dict(                                                            # years
 
 disc = dmap(discount, lifet) # AC/IC, how much to discount for each plant
 
-inv_cos = Dict(                                                             # MW
+inv_cos = Dict(          # euro/MW, was in euro/kW in table, so converted by multiplying
         # PLANT         IC      
-        :Hydro        =>  0,   
-        :Gas          =>  550,   
-        :Wind         =>  1100,
-        :Solar        =>  600,
-        :Batteries    =>  150,
-        :Transmission =>  2500,
-        :Nuclear      =>  7700
+        :Hydro        =>  0*1000,   
+        :Gas          =>  550*1000,   
+        :Wind         =>  1100*1000,
+        :Solar        =>  600*1000,
+        :Batteries    =>  150*1000,
+        :Transmission =>  2500*1000,
+        :Nuclear      =>  7700*1000
 )
 
-run_cos = Dict(                                                             # MW
+run_cos = Dict(
         # PLANT         RC      
         :Hydro        =>  0.1,   
         :Gas          =>  2,   
