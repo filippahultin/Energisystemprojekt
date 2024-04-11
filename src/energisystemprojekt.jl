@@ -23,7 +23,7 @@ function buildmodel(input)
 
     println("\nBuilding model...")
  
-    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis = input
+    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     m = Model(Gurobi.Optimizer)
 
@@ -49,6 +49,14 @@ function buildmodel(input)
 
         SystemCost[r in REGION],
             Systemcost[r] >= 0 # sum of all annualized costs
+
+        # Wind constraint
+        Wind[r in REGION, h in HOUR],
+            Electricity[r, :Wind, h] <= wind_cf[r, h]
+
+        # Solar constraint
+        Solar[r in REGION, h in HOUR],
+            Electricity[r, :Solar, h] <= pv_cf[r, h]
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],

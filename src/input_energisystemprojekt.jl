@@ -34,6 +34,7 @@ numhours = length(HOUR)
 
 timeseries = CSV.read(filepath, DataFrame)
 wind_cf = AxisArray(ones(numregions, numhours), REGION, HOUR)
+pv_cf = AxisArray(ones(numregions, numhours), REGION, HOUR)
 load = AxisArray(zeros(numregions, numhours), REGION, HOUR)
 inflow = AxisArray(zeros(numhours), HOUR)
 
