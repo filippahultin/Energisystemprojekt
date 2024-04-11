@@ -109,7 +109,7 @@ function runmodel()
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
    
-    return (m, Capacity, status)
+    return (m, Capacity, status, Capacity_result)
 
 
 
