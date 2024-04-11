@@ -52,11 +52,11 @@ function buildmodel(input)
 
         # Wind constraint
         Wind[r in REGION, h in HOUR],
-            Electricity[r, :Wind, h] <= wind_cf[r, h]
+            Electricity[r, :Wind, h] <= wind_cf[r, h]*Capacity[r, :Wind]
 
         # Solar constraint
         Solar[r in REGION, h in HOUR],
-            Electricity[r, :Solar, h] <= pv_cf[r, h]
+            Electricity[r, :Solar, h] <= pv_cf[r, h]*Capacity[r, :Solar]
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
@@ -69,8 +69,6 @@ function buildmodel(input)
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
             Systemcost[r] >= sum(inv_cos[p].*disc[p].*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR).*(fu_cos[p]/eff[p] + run_cos[p]) for p in PLANT)
-
-        # Solar and wind power are not limited by how much wind and solar there is!
 
     end #constraints
 

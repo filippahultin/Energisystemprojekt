@@ -55,7 +55,7 @@ maxcaptable = [                                                             # GW
         :Solar          460            75              60
         :Batteries      0              0               0        # change all to myinf later
         :Transmission   0              0               0        # change all to myinf later
-        :Nuclear        myinf          myinf           myinf
+        :Nuclear        0              0               0        # change all to myinf later
         ]
 
 maxcap = AxisArray(maxcaptable[:,2:end]'.*1000, REGION, PLANT) # MW
