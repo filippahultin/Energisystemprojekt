@@ -11,7 +11,7 @@ module energisystemprojekt
 #Pkg.add("CSV")
 #Pkg.add("DataFrames")
 #Pkg.add("Revise")
-# using energisystemprojekt
+#Pkg.add("StatsPlots")
 
 using JuMP, AxisArrays, Gurobi, UnPack
 
@@ -109,7 +109,9 @@ function runmodel()
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
    
-    nothing
+    return (m, Capacity, status)
+
+
 
 end #runmodel
 
