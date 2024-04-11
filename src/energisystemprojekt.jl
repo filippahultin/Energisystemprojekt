@@ -121,7 +121,11 @@ function plotresults(results)
     DE = Array(Capacity_result[:DE,:])
     SE = Array(Capacity_result[:SE,:])
     DK = Array(Capacity_result[:DK,:])
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 1c8b67f4b3023f15e4721977ad76376221960e4d
     # In PyPlot backend, if we use chars like 'A':'L', ticks are displayed with "PyWrap".
     ticklabel = ["DE", "SE", "DK"]
     groupedbar([DE SE DK],
