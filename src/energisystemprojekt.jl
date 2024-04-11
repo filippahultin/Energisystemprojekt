@@ -13,9 +13,9 @@ module energisystemprojekt
 #Pkg.add("Revise")
 #Pkg.add("StatsPlots")
 
-using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots
+using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots, Revise
 
-export runmodel
+export runmodel, plotresults
 
 include("input_energisystemprojekt.jl")
 
@@ -125,18 +125,14 @@ function plotresults(results)
     append!(Capacity_result[:DE,:], DE)
     append!(Capacity_result[:SE,:], SE)
     append!(Capacity_result[:DK,:], DK)
-    
-    measles = [38556, 24472, 14556, 18060, 19549, 8122, 28541, 7880, 3283, 4135, 7953, 1884]
-    mumps = [20178, 23536, 34561, 37395, 36072, 32237, 18597, 9408, 6005, 6268, 8963, 13882]
-    chickenPox = [37140, 32169, 37533, 39103, 33244, 23269, 16737, 5411, 3435, 6052, 12825, 23332]
 
     # In PyPlot backend, if we use chars like 'A':'L', ticks are displayed with "PyWrap".
-    ticklabel = string.(collect('A':'L'))
-    groupedbar([measles mumps chickenPox],
+    ticklabel = ["DE", "SE", "DK"]
+    groupedbar([DE SE DK],
             bar_position = :stack,
            bar_width=0.7,
            xticks=(1:12, ticklabel),
-          label=["measles" "mumps" "chickenPox"])
+          label=["DE" "SE" "DK"])
 end
 
 end # module
