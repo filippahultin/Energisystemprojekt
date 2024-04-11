@@ -40,7 +40,8 @@ inflow = AxisArray(zeros(numhours), HOUR)
 inflow[:] = timeseries[:, "Hydro_inflow"]
  
     for r in REGION
-        wind_cf[r, :]=timeseries[:, "Wind_"*"$r"]                                                        # 0-1, share of installed cap
+        wind_cf[r, :]=timeseries[:, "Wind_"*"$r"]  
+        pv_cf[r, :]=timeseries[:, "PV_"*"$r"]                                                     # 0-1, share of installed cap
         load[r, :]=timeseries[:, "Load_"*"$r"]                                                           # [MWh]
     end
 
@@ -126,6 +127,6 @@ emis = Dict(                                                             # MW
         :Nuclear      =>  0
 )
 
-      return (; REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis)
+      return (; REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf)
 
 end # read_input
