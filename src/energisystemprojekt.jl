@@ -77,7 +77,7 @@ function buildmodel(input)
         sum(Systemcost[r] for r in REGION)
     end # objective
 
-    return (;m, Capacity)
+    return (;m, Capacity, input)
 
 end # buildmodel
 
@@ -87,7 +87,7 @@ function runmodel()
 
     model = buildmodel(input)
 
-    @unpack m, Capacity = model   
+    @unpack m, Capacity, input = model   
     
     println("\nSolving model...")
     
@@ -109,30 +109,29 @@ function runmodel()
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
    
-    return (m, Capacity, status, Capacity_result)
+    return (;m, Capacity, status, Capacity_result, input)
 
 
 
 end #runmodel
 
 function plotresults(results)
-    m, Capacity, status, Capacity_result = results
+    @unpack m, Capacity, status, Capacity_result, input = results
+    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     DE = Array(Capacity_result[:DE,:])
     SE = Array(Capacity_result[:SE,:])
     DK = Array(Capacity_result[:DK,:])
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 1c8b67f4b3023f15e4721977ad76376221960e4d
-    # In PyPlot backend, if we use chars like 'A':'L', ticks are displayed with "PyWrap".
-    ticklabel = ["DE", "SE", "DK"]
-    groupedbar([DE SE DK],
-            bar_position = :stack,
-           bar_width=0.7,
-           xticks=(1:12, ticklabel),
-          label=["DE" "SE" "DK"])
+    println(Capacity_result.data)
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries", "Transmission", "Nuclears"], inner=3)
+    println(typeof(plantstr))
+    ticklabel = repeat(["DE", "SE", "DK"], outer=3)
+    groupedbar(ticklabel, Capacity_result[:,:], group=plantstr,
+            bar_position = :stack)
+           #bar_width=0.7,
+           #xticks=(1:7, ticklabel))
+          #label=plantstr)
+          
 end
 
 end # module
