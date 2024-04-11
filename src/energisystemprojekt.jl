@@ -119,14 +119,14 @@ function plotresults(results)
     @unpack m, Capacity, status, Capacity_result, input = results
     @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries", "Transmission", "Nuclears"], inner=3)
-    ticklabel = repeat(["DE", "SE", "DK"], outer=3)
-    groupedbar(ticklabel, Capacity_result[:,:], group=plantstr,
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries", "Transmission", "Nuclears"], outer=3)
+    ticklabel = repeat(["DE", "SE", "DK"], inner=7)
+
+    #groupedbar(["A", "A", "B", "B"], [4, 1, 2, 3], group=["x", "y", "x", "y"])
+    
+    groupedbar(ticklabel, collect(Iterators.flatten(Capacity_result.data')), group=plantstr,
             bar_position = :stack)
-           #bar_width=0.7,
-           #xticks=(1:7, ticklabel))
-          #label=plantstr)
-          
+    
 end
 
 end # module
