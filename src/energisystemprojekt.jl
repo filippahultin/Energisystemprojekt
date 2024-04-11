@@ -11,7 +11,7 @@ module energisystemprojekt
 #Pkg.add("CSV")
 #Pkg.add("DataFrames")
 #Pkg.add("Revise")
-# using energisystemprojekt
+#Pkg.add("StatsPlots")
 
 using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots
 
@@ -52,11 +52,11 @@ function buildmodel(input)
 
         # Wind constraint
         Wind[r in REGION, h in HOUR],
-            Electricity[r, :Wind, h] <= wind_cf[r, h]
+            Electricity[r, :Wind, h] <= wind_cf[r, h]*Capacity[r, :Wind]
 
         # Solar constraint
         Solar[r in REGION, h in HOUR],
-            Electricity[r, :Solar, h] <= pv_cf[r, h]
+            Electricity[r, :Solar, h] <= pv_cf[r, h]*Capacity[r, :Solar]
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
@@ -109,7 +109,9 @@ function runmodel()
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
    
-    nothing
+    return (m, Capacity, status, Capacity_result)
+
+
 
 end #runmodel
 
