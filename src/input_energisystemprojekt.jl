@@ -95,7 +95,7 @@ run_cos = Dict(
         :Nuclear      =>  4
 )
 
-fu_cos = Dict(                                                             # MW
+fu_cos = Dict(
         # PLANT         FC      
         :Hydro        =>  0,
         :Gas          =>  22,
@@ -106,7 +106,7 @@ fu_cos = Dict(                                                             # MW
         :Nuclear      =>  3.2
 )
 
-eff = Dict(                                                             # MW
+eff = Dict(
         # PLANT         EF 
         :Hydro        =>  1,
         :Gas          =>  0.4,
@@ -117,7 +117,7 @@ eff = Dict(                                                             # MW
         :Nuclear      =>  0.4
 )
 
-emis = Dict(                                                             # MW
+emis = Dict(
         # PLANT         EM
         :Hydro        =>  0,
         :Gas          =>  0.202,
