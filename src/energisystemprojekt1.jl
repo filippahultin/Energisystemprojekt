@@ -2,7 +2,7 @@
 # Så när ni ska använda det, så skriver ni Using energisystemprojekt i er REPL, då får ni ut det ni
 # exporterat. Se rad 9.
 
-module energisystemprojekt
+module energisystemprojekt1
 
 #import Pkg
 #Pkg.add("Gurobi")
