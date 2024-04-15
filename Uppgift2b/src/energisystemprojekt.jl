@@ -23,13 +23,13 @@ function buildmodel(input)
 
     println("\nBuilding model...")
  
-    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+    @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     m = Model(Gurobi.Optimizer)
 
     @variables m begin
 
-        Electricity[r in REGION, p in PLANT, h in HOUR]       >= 0        # MWh/h usage
+        Electricity[r in REGION, p in REAL_PLANTS, h in HOUR]       >= 0        # MWh/h usage
         Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
         StoredWater[h in HOUR]                                >= 0        # MWh
         Systemcost[r in REGION]                               >= 0        # €
@@ -52,7 +52,7 @@ function buildmodel(input)
             # The others don't pollute!
             Emissions[r, h] >= Electricity[r, :Gas, h]*emis[:Gas]
 
-        Generation[r in REGION, p in PLANT, h in HOUR],
+        Generation[r in REGION, p in REAL_PLANTS, h in HOUR],
             Electricity[r, p, h] <= Capacity[r, p] # * capacity factor
 
         SystemCost[r in REGION],
@@ -68,7 +68,7 @@ function buildmodel(input)
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
-            load[r, h] <= sum(Electricity[r, p, h] for p in PLANT)
+            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS)
         
         # Constrain water levels
         WaterLevel[h in HOUR],
@@ -76,7 +76,7 @@ function buildmodel(input)
         
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
-            Systemcost[r] >= sum(inv_cos[p].*disc[p].*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR).*(fu_cos[p]/eff[p] + run_cos[p]) for p in PLANT)
+            Systemcost[r] >= sum(inv_cos[p].*disc[p].*Capacity[r, p] for p in PLANT) + sum(sum(Electricity[r, p, h] for h in HOUR).*(fu_cos[p]/eff[p] + run_cos[p]) for p in REAL_PLANTS)
 
     end #constraints
 
@@ -96,7 +96,7 @@ function runmodel()
     model = buildmodel(input)
 
     @unpack m, Capacity, Electricity, Emissions, input = model   
-    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+    @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
     
     println("\nSolving model...")
     
@@ -126,7 +126,7 @@ end #runmodel
 
 function plotGermany(results)
     @unpack m, Capacity, Electricity_result, status, Capacity_result, input = results
-    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+    @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     relevant_load = sum(load[:DE, h] for h in 147:651)
     relevant_elec = [sum(Electricity_result[:DE, p, h] for h in 147:651) for p in [:Hydro, :Gas, :Wind, :Solar]]
@@ -137,7 +137,7 @@ end
 
 function plotresults(results)
     @unpack m, Capacity, status, Capacity_result, input = results
-    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+    @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     plantstr = repeat(["Hydro", "Gas", "Wind", "Solar"], outer=3)
     ticklabel = repeat(["DE", "SE", "DK"], inner=4)

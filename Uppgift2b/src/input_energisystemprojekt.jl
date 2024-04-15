@@ -26,6 +26,7 @@ filepath = joinpath(folder, "TimeSeries.csv")
 #Sets
 REGION = [:DE, :SE, :DK]
 PLANT = [:Hydro, :Gas, :Wind, :Solar, :Batteries, :Transmission, :Nuclear] # Add all plants
+REAL_PLANTS = [:Hydro, :Gas, :Wind, :Solar, :Nuclear]
 HOUR = 1:8760
 
 #Parameters
@@ -128,6 +129,6 @@ emis = Dict(
         :Nuclear      =>  0
 )
 
-      return (; REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf)
+      return (; REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf)
 
 end # read_input
