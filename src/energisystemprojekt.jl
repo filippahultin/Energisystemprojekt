@@ -33,6 +33,7 @@ function buildmodel(input)
         Capacity[r in REGION, p in PLANT]                     >= 0        # MW investment
         StoredWater[h in HOUR]                                >= 0        # MWh
         Systemcost[r in REGION]                               >= 0        # €
+        Emissions[r in REGION, h in HOUR]                     >= 0        # ton CO_2/MWh_fuel
 
     end # variables
 
@@ -44,6 +45,10 @@ function buildmodel(input)
 
 
     @constraints m begin
+        Emission[r in REGION, h in HOUR],
+            # The others don't pollute!
+            Emissions[r, h] == Electricity[r, :Gas, h]*emis[:Gas]
+
         Generation[r in REGION, p in PLANT, h in HOUR],
             Electricity[r, p, h] <= Capacity[r, p] # * capacity factor
 
@@ -104,16 +109,24 @@ function runmodel()
 
     Cost_result = objective_value(m)/1000000 # M€
     Capacity_result = value.(Capacity)
-
+    Electricity_result = value.(Electricity)
+    Emissions_result = value.(Emissions)
 
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
+    println("Emissions: ", sum(Emissions_result[r, h] for r in REGION, h in HOUR))
    
     return (;m, Capacity, status, Capacity_result, input)
 
-
-
 end #runmodel
+
+function plotGermany(Electricity_results, load)
+    relevant_load = sum(load[:DE, h] for h in 147:651)
+    relevant_elec = sum(Electricity_results[:DE, h] for h in 147:651)
+    types = ["Hydro", "Gas", "Wind", "Solar", "Load"]
+
+    groupedbar(types, [relevant_elec; relevant_load], group=["Production", "Production", "Production", "Production", "Load"])
+end
 
 function plotresults(results)
     @unpack m, Capacity, status, Capacity_result, input = results
