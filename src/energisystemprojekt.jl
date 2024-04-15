@@ -15,7 +15,7 @@ module energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots, Revise
 
-export runmodel, plotresults
+export runmodel, plotresults, plotGermany
 
 include("input_energisystemprojekt.jl")
 
@@ -82,7 +82,7 @@ function buildmodel(input)
         sum(Systemcost[r] for r in REGION)
     end # objective
 
-    return (;m, Capacity, input)
+    return (;m, Capacity, Electricity, Emissions, input)
 
 end # buildmodel
 
@@ -92,7 +92,8 @@ function runmodel()
 
     model = buildmodel(input)
 
-    @unpack m, Capacity, input = model   
+    @unpack m, Capacity, Electricity, Emissions, input = model   
+    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
     
     println("\nSolving model...")
     
@@ -116,28 +117,31 @@ function runmodel()
     println("Capacity: ", Capacity_result)
     println("Emissions: ", sum(Emissions_result[r, h] for r in REGION, h in HOUR))
    
-    return (;m, Capacity, status, Capacity_result, input)
+    return (;m, Capacity, Electricity_result, Emissions_result, status, Capacity_result, input)
 
 end #runmodel
 
-function plotGermany(Electricity_results, load)
+function plotGermany(results)
+    @unpack m, Capacity, Electricity_result, status, Capacity_result, input = results
+    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+
     relevant_load = sum(load[:DE, h] for h in 147:651)
-    relevant_elec = sum(Electricity_results[:DE, h] for h in 147:651)
+    relevant_elec = [sum(Electricity_result[:DE, p, h] for h in 147:651) for p in [:Hydro, :Gas, :Wind, :Solar]]
     types = ["Hydro", "Gas", "Wind", "Solar", "Load"]
 
-    groupedbar(types, [relevant_elec; relevant_load], group=["Production", "Production", "Production", "Production", "Load"])
+    groupedbar(["Production", "Production", "Production", "Production", "Load"], [relevant_elec; relevant_load], group=types, bar_position = :stack)
 end
 
 function plotresults(results)
     @unpack m, Capacity, status, Capacity_result, input = results
     @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries", "Transmission", "Nuclears"], outer=3)
-    ticklabel = repeat(["DE", "SE", "DK"], inner=7)
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar"], outer=3)
+    ticklabel = repeat(["DE", "SE", "DK"], inner=4)
 
     #groupedbar(["A", "A", "B", "B"], [4, 1, 2, 3], group=["x", "y", "x", "y"])
     
-    groupedbar(ticklabel, collect(Iterators.flatten(Capacity_result.data')), group=plantstr,
+    groupedbar(ticklabel, collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar]].data')), group=plantstr,
             bar_position = :stack)
     
 end
