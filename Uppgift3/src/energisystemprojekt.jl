@@ -27,8 +27,14 @@ function buildmodel(input)
 
     m = Model(Gurobi.Optimizer)
 
+    REGION_PAIRS = [:SEDE, :SEDK, :DEDK]
+    ORD_REGION_PAIRS = [:SEDE, :DESE, :SEDK, :DKSE, :DEDK, :DKDE]
+
     @variables m begin
 
+        Supply[r in REGION, h in HOUR]                          >= 0            # supply of electricity in each region
+        TransmissionElectricity[orp in ORD_REGION_PAIRS, h in HOUR] >= 0
+        TransmissionCapacity[rp in REGION_PAIRS]                >= 0           
         StorageBatteries[r in REGION, h in HOUR]                >= 0
         ElectricityBatteries[r in REGION, h in HOUR]            >= 0            # discharge of batteries
         Electricity[r in REGION, p in REAL_PLANTS, h in HOUR]       >= 0        # MWh/h usage
@@ -54,6 +60,45 @@ function buildmodel(input)
             # The others don't pollute!
             Emissions[r, h] >= Electricity[r, :Gas, h]*emis[:Gas]
 
+        # can not transmit more than capacity
+        TransmissionCapSEDE[h in HOUR],
+           TransmissionElectricity[:SEDE, h] <= TransmissionCapacity[:SEDE]
+
+        TransmissionCapDESE[h in HOUR],
+            TransmissionElectricity[:DESE, h] <= TransmissionCapacity[:SEDE]
+        
+        TransmissionCapSEDK[h in HOUR],
+            TransmissionElectricity[:SEDK, h] <= TransmissionCapacity[:SEDK]
+        
+        TransmissionCapDKSE[h in HOUR],
+            TransmissionElectricity[:DKSE, h] <= TransmissionCapacity[:SEDK]
+        
+        TransmissionCapDEDK[h in HOUR],
+            TransmissionElectricity[:DEDK, h] <= TransmissionCapacity[:DEDK]
+        
+        TransmissionCapDKDE[h in HOUR],
+            TransmissionElectricity[:DKDE, h] <= TransmissionCapacity[:DEDK]
+        
+
+        # Transmissioncost
+        TransmissionCapacitySEDE,
+            TransmissionCapacity[:SEDE] <= Capacity[:SE, :Transmission]
+
+        TransmissionCapacityDEDK,
+            TransmissionCapacity[:DEDK] <= Capacity[:DE, :Transmission]
+
+        TransmissionCapacitySEDK,
+            TransmissionCapacity[:SEDK] <= Capacity[:DK, :Transmission]
+
+        # Supply constraint
+        SupplySE[h in HOUR],
+            sum(Electricity[:SE, p, h] for p in REAL_PLANTS) + ElectricityBatteries[:SE, h] + eff[:Transmission]*(TransmissionElectricity[:DESE, h] + TransmissionElectricity[:DKSE, h]) - (TransmissionElectricity[:SEDE, h] + TransmissionElectricity[:SEDK, h])
+        
+        SupplyDE[h in HOUR],
+
+        SupplyDK[h in HOUR],
+
+
         Generation[r in REGION, p in REAL_PLANTS, h in HOUR],
             Electricity[r, p, h] <= Capacity[r, p] # * capacity factor
 
@@ -73,7 +118,7 @@ function buildmodel(input)
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
-            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + ElectricityBatteries[r, h] * 0.9 # loss of battery storage
+            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + ElectricityBatteries[r, h] * eff[:Batteries] # loss of battery storage
         
         # Constrain water levels
         WaterLevel[h in HOUR],
