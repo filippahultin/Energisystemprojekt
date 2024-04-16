@@ -73,7 +73,7 @@ function buildmodel(input)
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
-            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + ElectricityBatteries[r, h] * 0.9 # loss of battery storage
+            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + ElectricityBatteries[r, h] * eff[:Batteries] # loss of battery storage
         
         # Constrain water levels
         WaterLevel[h in HOUR],
