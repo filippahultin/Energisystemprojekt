@@ -92,15 +92,16 @@ function buildmodel(input)
 
         # Supply constraint
         SupplySE[h in HOUR],
-            sum(Electricity[:SE, p, h] for p in REAL_PLANTS) + ElectricityBatteries[:SE, h] + eff[:Transmission]*(TransmissionElectricity[:DESE, h] + TransmissionElectricity[:DKSE, h]) - (TransmissionElectricity[:SEDE, h] + TransmissionElectricity[:SEDK, h])
+            Supply[:SE, h] <= sum(Electricity[:SE, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[:SE, h] + eff[:Transmission]*(TransmissionElectricity[:DESE, h] + TransmissionElectricity[:DKSE, h]) - (TransmissionElectricity[:SEDE, h] + TransmissionElectricity[:SEDK, h]) - (StorageBatteries[:SE, h == length(HOUR) ? 1 : h+1] - StorageBatteries[:SE, h] + ElectricityBatteries[:SE, h])
         
         SupplyDE[h in HOUR],
+            Supply[:DE, h] <= sum(Electricity[:DE, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[:DE, h] + eff[:Transmission]*(TransmissionElectricity[:SEDE, h] + TransmissionElectricity[:DKDE, h]) - (TransmissionElectricity[:DESE, h] + TransmissionElectricity[:DEDK, h]) - (StorageBatteries[:DE, h == length(HOUR) ? 1 : h+1] - StorageBatteries[:DE, h] + ElectricityBatteries[:DE, h])
 
         SupplyDK[h in HOUR],
-
+            Supply[:DK, h] <= sum(Electricity[:DK, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[:DK, h] + eff[:Transmission]*(TransmissionElectricity[:SEDK, h] + TransmissionElectricity[:DEDK, h]) - (TransmissionElectricity[:DKSE, h] + TransmissionElectricity[:DKDE, h]) - (StorageBatteries[:DK, h == length(HOUR) ? 1 : h+1] - StorageBatteries[:DK, h] + ElectricityBatteries[:DK, h])
 
         Generation[r in REGION, p in REAL_PLANTS, h in HOUR],
-            Electricity[r, p, h] <= Capacity[r, p] # * capacity factor
+            Electricity[r, p, h] <= Capacity[r, p]
 
         BatteryStorage[r in REGION, h in HOUR],
             StorageBatteries[r, h] <= Capacity[r, :Batteries]
@@ -118,15 +119,21 @@ function buildmodel(input)
         
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
-            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + ElectricityBatteries[r, h] * eff[:Batteries] # loss of battery storage
+            load[r, h] <= Supply[r, h]
         
         # Constrain water levels
         WaterLevel[h in HOUR],
             StoredWater[h] <= StoredWater[h>1 ? h-1 : length(HOUR)] + inflow[h>1 ? h-1 : length(HOUR)] - Electricity[:SE, :Hydro, h>1 ? h-1 : length(HOUR)]
         
         # Constrain battery levels
-        BatteryLevel[r in REGION, h in HOUR],
-            StorageBatteries[r, h] <= StorageBatteries[r, h>1 ? h-1 : length(HOUR)] + (sum(Electricity[r, p, h>1 ? h-1 : length(HOUR)] for p in REAL_PLANTS) - load[r, h>1 ? h-1 : length(HOUR)]) - ElectricityBatteries[r, h>1 ? h-1 : length(HOUR)]
+        BatteryLevelSE[h in HOUR],
+            StorageBatteries[:SE, h == length(HOUR) ? 1 : h+1] <= StorageBatteries[:SE, h] - ElectricityBatteries[:SE, h] + (sum(Electricity[:SE, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[:SE, h] + eff[:Transmission]*(TransmissionElectricity[:DESE, h] + TransmissionElectricity[:DKSE, h]) - TransmissionElectricity[:SEDE, h] - TransmissionElectricity[:SEDK, h] - Supply[:SE, h])
+        
+        BatteryLevelDE[h in HOUR],
+            StorageBatteries[:DE, h == length(HOUR) ? 1 : h+1] <= StorageBatteries[:DE, h] - ElectricityBatteries[:DE, h] + (sum(Electricity[:DE, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[:DE, h] + eff[:Transmission]*(TransmissionElectricity[:SEDE, h] + TransmissionElectricity[:DKDE, h]) - TransmissionElectricity[:DESE, h] - TransmissionElectricity[:DEDK, h] - Supply[:DE, h])
+        
+        BatteryLevelDK[h in HOUR],
+            StorageBatteries[:DK, h == length(HOUR) ? 1 : h+1] <= StorageBatteries[:DK, h] - ElectricityBatteries[:DK, h] + (sum(Electricity[:DK, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[:DK, h] + eff[:Transmission]*(TransmissionElectricity[:SEDK, h] + TransmissionElectricity[:DEDK, h]) - TransmissionElectricity[:DKSE, h] - TransmissionElectricity[:DKDE, h] - Supply[:DK, h])
         
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
@@ -139,7 +146,7 @@ function buildmodel(input)
         sum(Systemcost[r] for r in REGION)
     end # objective
 
-    return (;m, Capacity, Electricity, ElectricityBatteries, Emissions, input)
+    return (;m, Capacity, Electricity, ElectricityBatteries, TransmissionElectricity, TransmissionCapacity, Emissions, input)
 
 end # buildmodel
 
@@ -149,7 +156,7 @@ function runmodel()
 
     model = buildmodel(input)
 
-    @unpack m, Capacity, Electricity, ElectricityBatteries Emissions, input = model   
+    @unpack m, Capacity, Electricity, ElectricityBatteries, TransmissionElectricity, TransmissionCapacity, Emissions, input = model   
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
     
     println("\nSolving model...")
@@ -170,37 +177,42 @@ function runmodel()
     Electricity_result = value.(Electricity)
     ElectricityBatteries_result = value.(ElectricityBatteries)
     Emissions_result = value.(Emissions)
+    TransmissionElectricity_result = value.(TransmissionElectricity)
+    TransmissionCapacity_result = value.(TransmissionCapacity)
 
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
     println("Emissions: ", sum(Emissions_result[r, h] for r in REGION, h in HOUR))
    
-    return (;m, Capacity, Electricity_result, ElectricityBatteries_result, Emissions_result, status, Capacity_result, input)
+    return (;m, Capacity, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, TransmissionCapacity_result, Emissions_result, status, Capacity_result, input)
 
 end #runmodel
 
 function plotGermany(results)
-    @unpack m, Capacity, Electricity_result, ElectricityBatteries_result, status, Capacity_result, input = results
+    @unpack m, Capacity, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, status, Capacity_result, input = results
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     relevant_load = sum(load[:DE, h] for h in 147:651)
     relevant_elec = [sum(Electricity_result[:DE, p, h] for h in 147:651) for p in [:Hydro, :Gas, :Wind, :Solar]]
     batteries_elec = [sum(ElectricityBatteries_result[:DE, h] for h in 147:651)]
-    types = ["Hydro", "Gas", "Wind", "Solar", "Batteries", "Load"]
+    transmission_elec = [sum(eff[:Transmission]*(TransmissionElectricity_result[:SEDE, h] + TransmissionElectricity_result[:DKDE, h]) for h in 147:651)]
+    types = ["Hydro", "Gas", "Wind", "Solar", "Batteries", "Transmission", "Load"]
 
-    groupedbar(["Production", "Production", "Production", "Production", "Production", "Load"], [relevant_elec; batteries_elec; relevant_load], group=types, bar_position = :stack)
+    groupedbar(["Production", "Production", "Production", "Production", "Production", "Production", "Load"], [relevant_elec; batteries_elec; transmission_elec; relevant_load], group=types, bar_position = :stack)
 end
 
 function plotresults(results)
-    @unpack m, Capacity, status, Capacity_result, input = results
+    @unpack m, Capacity, status, Capacity_result, TransmissionCapacity_result, input = results
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries"], outer=3)
-    ticklabel = repeat(["DE", "SE", "DK"], inner=5)
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries", "Transmission"], outer=3)
+    ticklabel = repeat(["DE", "SE", "DK"], inner=6)
+
+    transmission_cap = [(TransmissionCapacity_result[:SEDE]+TransmissionCapacity_result[:DEDK])/2, (TransmissionCapacity_result[:SEDE]+TransmissionCapacity_result[:SEDK])/2, (TransmissionCapacity_result[:SEDK]+TransmissionCapacity_result[:DEDK])/2]
 
     #groupedbar(["A", "A", "B", "B"], [4, 1, 2, 3], group=["x", "y", "x", "y"])
     
-    groupedbar(ticklabel, collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar, :Batteries]].data')), group=plantstr,
+    groupedbar(ticklabel, [collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar, :Batteries]].data')); transmission_cap], group=plantstr,
             bar_position = :stack)
     
 end
