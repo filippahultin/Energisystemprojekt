@@ -104,7 +104,7 @@ function runmodel()
 
     model = buildmodel(input)
 
-    @unpack m, Capacity, Electricity, ElectricityBatteries Emissions, input = model   
+    @unpack m, Capacity, Electricity, ElectricityBatteries,  Emissions, input = model   
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
     
     println("\nSolving model...")
