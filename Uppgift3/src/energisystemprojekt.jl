@@ -189,12 +189,12 @@ function runmodel()
     println("Capacity: ", Capacity_result)
     println("Emissions: ", sum(Emissions_result[r, h] for r in REGION, h in HOUR))
    
-    return (;m, Capacity, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, TransmissionCapacity_result, Emissions_result, StorageBatteries_result, status, Capacity_result, input)
+    return (;m, Capacity, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, TransmissionCapacity_result, Emissions_result, Cost_result, StorageBatteries_result, status, Capacity_result, input)
 
 end #runmodel
 
 function plotGermany(results)
-    @unpack m, Capacity, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, status, Capacity_result, input = results
+    @unpack m, Capacity, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, status, Capacity_result, Cost_result, Emissions_result, input = results
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
     relevant_load = [sum(load[:DE, h] for h in 147:651)]
@@ -203,13 +203,15 @@ function plotGermany(results)
     transmission_elec = [sum(eff[:Transmission]*(TransmissionElectricity_result[:SEDE, h] + TransmissionElectricity_result[:DKDE, h]) for h in 147:651)]
     types = ["Hydro", "Gas", "Wind", "Solar", "Transmission", "Load"]
 
+    println(Cost_result)
+    println([sum(Emissions_result[r, h] for h in HOUR) for r in [:DE, :SE, :DK]])
     println(relevant_elec)
     #println(batteries_elec)
     println(transmission_elec)
     println(relevant_load)
 
     groupedbar(["Supply", "Supply", "Supply", "Supply", "Supply", "Load"], [relevant_elec; transmission_elec; relevant_load],
-    group=types, bar_position = :stack, title="Germany supply/demand")
+    group=types, bar_position = :stack, title="E3: Germany supply/demand")
 end
 
 function plotresults(results)
