@@ -124,7 +124,7 @@ function buildmodel(input)
         
         # Bound the water level
         WaterLevelMax[h in HOUR],
-            StoredWater[h] <= 33*10^12 # 33 TWh
+            StoredWater[h] <= 33*10^6 # 33 TWh, given i MWh
         
         # Constrain water levels
         WaterLevel[h in HOUR],

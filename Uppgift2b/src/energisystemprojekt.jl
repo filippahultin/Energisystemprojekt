@@ -79,6 +79,10 @@ function buildmodel(input)
         Consumption[r in REGION, h in HOUR],
             load[r, h] <= Supply[r, h]
         
+        # Bound the water level
+        WaterLevelMax[h in HOUR],
+            StoredWater[h] <= 33*10^6 # 33 TWh, given i MWh
+        
         # Constrain water levels
         WaterLevel[h in HOUR],
             StoredWater[h] <= StoredWater[h>1 ? h-1 : length(HOUR)] + inflow[h>1 ? h-1 : length(HOUR)] - Electricity[:SE, :Hydro, h>1 ? h-1 : length(HOUR)]
