@@ -72,7 +72,7 @@ function buildmodel(input)
         Solar[r in REGION, h in HOUR],
             Electricity[r, :Solar, h] <= pv_cf[r, h]*Capacity[r, :Solar]
         
-        SupplyCons[r in REGIOn, h in HOUR],
+        SupplyCons[r in REGION, h in HOUR],
             Supply[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[r, h] - AbsorbBatteries[r, h]
         
         # Need to produce as much as is consumed!
