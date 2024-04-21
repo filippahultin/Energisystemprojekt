@@ -15,7 +15,7 @@ module energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots, Revise
 
-export runmodel, plotresults, plotGermany
+export runmodel, plotresults, plotGermany, annualProdPlot
 
 include("input_energisystemprojekt.jl")
 
@@ -121,7 +121,7 @@ function runmodel()
     println("Capacity: ", Capacity_result)
     println("Emissions: ", sum(Emissions_result[r, h] for r in REGION, h in HOUR))
    
-    return (;m, Capacity, Electricity_result, Emissions_result, status, Capacity_result, input)
+    return (;m, Capacity, Electricity_result, Emissions_result, status, Capacity_result, Cost_result, input)
 
 end #runmodel
 
