@@ -139,29 +139,64 @@ function runmodel()
 end #runmodel
 
 function plotGermany(results)
-    @unpack m, Capacity, Electricity_result, ElectricityBatteries_result, status, Capacity_result, input = results
+    @unpack m, Capacity, Electricity_result, ElectricityBatteries_result, status, Capacity_result, Cost_result, Emissions_result, input = results
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    relevant_load = sum(load[:DE, h] for h in 147:651)
+    relevant_load = [sum(load[:DE, h] for h in 147:651)]
     relevant_elec = [sum(Electricity_result[:DE, p, h] for h in 147:651) for p in [:Hydro, :Gas, :Wind, :Solar]]
-    batteries_elec = [sum(ElectricityBatteries_result[:DE, h] for h in 147:651)]
-    types = ["Hydro", "Gas", "Wind", "Solar", "Batteries", "Load"]
+    #batteries_elec = [sum(ElectricityBatteries_result[:DE, h] for h in 147:651)]
+    types = ["Hydro", "Gas", "Wind", "Solar", "Load"]
 
-    groupedbar(["Production", "Production", "Production", "Production", "Production", "Load"], [relevant_elec; batteries_elec; relevant_load], group=types, bar_position = :stack)
+    println(Cost_result)
+    println([sum(Emissions_result[r, h] for h in HOUR) for r in [:DE, :SE, :DK]])
+    println(relevant_elec)
+    #println(batteries_elec)
+    println(relevant_load)
+
+    groupedbar(["Supply", "Supply", "Supply", "Supply", "Load"], [relevant_elec; relevant_load],
+    group=types, bar_position = :stack, title="E2: Germany supply/demand")
 end
+
 
 function plotresults(results)
     @unpack m, Capacity, status, Capacity_result, input = results
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries"], outer=3)
-    ticklabel = repeat(["DE", "SE", "DK"], inner=5)
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries"], inner=3)
+    ticklabel = repeat(["DE", "SE", "DK"], outer=5)
+    big_cap = collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar, :Batteries]].data))
 
     #groupedbar(["A", "A", "B", "B"], [4, 1, 2, 3], group=["x", "y", "x", "y"])
     
-    groupedbar(ticklabel, collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar, :Batteries]].data')), group=plantstr,
-            bar_position = :stack)
+    println(plantstr)
+    println(ticklabel)
+    println(big_cap)
+
+    groupedbar(ticklabel, big_cap, group=plantstr,
+            bar_position = :stack, title="E2: Total capacity")
+end
+
+
+function annualProdPlot(results)
+
+    @unpack m, Electricity_result, ElectricityBatteries_result, StorageBatteries_result, input = results
+    @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar", "Batteries"], inner=3)
+    ticklabel = repeat(["DE", "SE", "DK"], outer=5)
+    big_elec = collect(Iterators.flatten(sum(Electricity_result[[:DE, :SE, :DK],[:Hydro, :Gas, :Wind, :Solar],h].data for h in HOUR)))
+    batteries = [sum(ElectricityBatteries_result[:DE, h] for h in HOUR), sum(ElectricityBatteries_result[:SE, h] for h in HOUR), sum(ElectricityBatteries_result[:DK, h] for h in HOUR)]
+
+    println(StorageBatteries_result[:DE, 1:500])
+
+    println(plantstr)
+    println(ticklabel)
+    println(big_elec)
+    println(batteries)
+    println(transmission)
     
+    groupedbar(ticklabel, [big_elec; batteries], group=plantstr,
+            bar_position = :stack, title="E3: Annual production")
 end
 
 end # module
