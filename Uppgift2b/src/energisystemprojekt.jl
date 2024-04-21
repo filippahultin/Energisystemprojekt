@@ -28,7 +28,8 @@ function buildmodel(input)
     m = Model(Gurobi.Optimizer)
 
     @variables m begin
-
+        Supply[r in REGION, h in HOUR]                          >= 0            # supply of electricity in each region
+        AbsorbBatteries[r in REGION, h in HOUR]                 >= 0            # Charge of batteries
         StorageBatteries[r in REGION, h in HOUR]                >= 0
         ElectricityBatteries[r in REGION, h in HOUR]            >= 0            # discharge of batteries
         Electricity[r in REGION, p in REAL_PLANTS, h in HOUR]       >= 0        # MWh/h usage
@@ -71,9 +72,12 @@ function buildmodel(input)
         Solar[r in REGION, h in HOUR],
             Electricity[r, :Solar, h] <= pv_cf[r, h]*Capacity[r, :Solar]
         
+        SupplyCons[r in REGIOn, h in HOUR],
+            Supply[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + eff[:Batteries]*ElectricityBatteries[r, h] - AbsorbBatteries[r, h]
+        
         # Need to produce as much as is consumed!
         Consumption[r in REGION, h in HOUR],
-            load[r, h] <= sum(Electricity[r, p, h] for p in REAL_PLANTS) + ElectricityBatteries[r, h] * eff[:Batteries] # loss of battery storage
+            load[r, h] <= Supply[r, h]
         
         # Constrain water levels
         WaterLevel[h in HOUR],
@@ -81,7 +85,7 @@ function buildmodel(input)
         
         # Constrain battery levels
         BatteryLevel[r in REGION, h in HOUR],
-            StorageBatteries[r, h] <= StorageBatteries[r, h>1 ? h-1 : length(HOUR)] + (sum(Electricity[r, p, h>1 ? h-1 : length(HOUR)] for p in REAL_PLANTS) - load[r, h>1 ? h-1 : length(HOUR)]) - ElectricityBatteries[r, h>1 ? h-1 : length(HOUR)]
+            StorageBatteries[r, h] <= StorageBatteries[r, h>1 ? h-1 : length(HOUR)] + AbsorbBatteries[r, h>1 ? h-1 : length(HOUR)] - ElectricityBatteries[r, h>1 ? h-1 : length(HOUR)]
         
         # Ensure the system cost is what it claims to be
         Objective[r in REGION],
