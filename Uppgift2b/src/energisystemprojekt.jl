@@ -15,7 +15,7 @@ module energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots, Revise
 
-export runmodel, plotresults, plotGermany
+export runmodel, plotresults, plotGermany, annualProdPlot
 
 include("input_energisystemprojekt.jl")
 
@@ -98,7 +98,7 @@ function buildmodel(input)
         sum(Systemcost[r] for r in REGION)
     end # objective
 
-    return (;m, Capacity, Electricity, ElectricityBatteries, Emissions, input)
+    return (;m, Capacity, Electricity, ElectricityBatteries, Emissions, StorageBatteries, input)
 
 end # buildmodel
 
@@ -108,7 +108,7 @@ function runmodel()
 
     model = buildmodel(input)
 
-    @unpack m, Capacity, Electricity, ElectricityBatteries,  Emissions, input = model   
+    @unpack m, Capacity, Electricity, ElectricityBatteries,  Emissions, StorageBatteries, input = model   
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
     
     println("\nSolving model...")
@@ -129,12 +129,13 @@ function runmodel()
     Electricity_result = value.(Electricity)
     ElectricityBatteries_result = value.(ElectricityBatteries)
     Emissions_result = value.(Emissions)
+    StorageBatteries_result = value.(StorageBatteries)
 
     println("Cost (M€): ", Cost_result)
     println("Capacity: ", Capacity_result)
     println("Emissions: ", sum(Emissions_result[r, h] for r in REGION, h in HOUR))
    
-    return (;m, Capacity, Electricity_result, ElectricityBatteries_result, Emissions_result, status, Capacity_result, input)
+    return (;m, Capacity, Electricity_result, Cost_result, ElectricityBatteries_result, Emissions_result, StorageBatteries_result, status, Capacity_result, input)
 
 end #runmodel
 
@@ -193,10 +194,10 @@ function annualProdPlot(results)
     println(ticklabel)
     println(big_elec)
     println(batteries)
-    println(transmission)
+    print(sum(Electricity_result[:SE, :Hydro, h] for h in HOUR))
     
     groupedbar(ticklabel, [big_elec; batteries], group=plantstr,
-            bar_position = :stack, title="E3: Annual production")
+            bar_position = :stack, title="E2: Annual production")
 end
 
 end # module

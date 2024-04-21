@@ -76,7 +76,7 @@ disc = dmap(discount, lifet) # AC/IC, how much to discount for each plant
 
 inv_cos = Dict(          # euro/MW, was in euro/kW in table, so converted by multiplying
         # PLANT         IC      
-        :Hydro        =>  0*1000,   
+        :Hydro        =>  0*1000,
         :Gas          =>  550*1000,   
         :Wind         =>  1100*1000,
         :Solar        =>  600*1000,
