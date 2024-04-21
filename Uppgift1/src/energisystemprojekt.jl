@@ -125,30 +125,61 @@ function runmodel()
 
 end #runmodel
 
+
 function plotGermany(results)
-    @unpack m, Capacity, Electricity_result, status, Capacity_result, input = results
+    @unpack m, Capacity, Electricity_result, status, Capacity_result, Cost_result, input = results
     @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    relevant_load = sum(load[:DE, h] for h in 147:651)
+    relevant_load = [sum(load[:DE, h] for h in 147:651)]
     relevant_elec = [sum(Electricity_result[:DE, p, h] for h in 147:651) for p in [:Hydro, :Gas, :Wind, :Solar]]
     types = ["Hydro", "Gas", "Wind", "Solar", "Load"]
 
-    groupedbar(["Production", "Production", "Production", "Production", "Load"], [relevant_elec; relevant_load], group=types, bar_position = :stack)
+    println(Cost_result)
+    println(relevant_elec)
+    println(relevant_load)
+
+    groupedbar(["Supply", "Supply", "Supply", "Supply", "Load"], [relevant_elec; relevant_load],
+    group=types, bar_position = :stack, title="E1: Germany supply/demand")
 end
+
 
 function plotresults(results)
     @unpack m, Capacity, status, Capacity_result, input = results
     @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
 
-    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar"], outer=3)
-    ticklabel = repeat(["DE", "SE", "DK"], inner=4)
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar"], inner=3)
+    ticklabel = repeat(["DE", "SE", "DK"], outer=4)
+    big_cap = collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar]].data))
 
     #groupedbar(["A", "A", "B", "B"], [4, 1, 2, 3], group=["x", "y", "x", "y"])
     
-    groupedbar(ticklabel, collect(Iterators.flatten(Capacity_result[:,[:Hydro, :Gas, :Wind, :Solar]].data')), group=plantstr,
-            bar_position = :stack)
-    
+    println(plantstr)
+    println(ticklabel)
+    println(big_cap)
+
+    groupedbar(ticklabel, big_cap, group=plantstr,
+            bar_position = :stack, title="E1: Total capacity")
 end
+
+
+function annualProdPlot(results)
+
+    @unpack m, Electricity_result, input = results
+    @unpack REGION, PLANT, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+
+    plantstr = repeat(["Hydro", "Gas", "Wind", "Solar"], inner=3)
+    ticklabel = repeat(["DE", "SE", "DK"], outer=4)
+    big_elec = collect(Iterators.flatten(sum(Electricity_result[[:DE, :SE, :DK],[:Hydro, :Gas, :Wind, :Solar],h].data for h in HOUR)))
+
+    println(plantstr)
+    println(ticklabel)
+    println(big_elec)
+    print(sum(Electricity_result[:SE, :Hydro, h] for h in HOUR))
+    
+    groupedbar(ticklabel, big_elec, group=plantstr,
+            bar_position = :stack, title="E1: Annual production")
+end
+
 
 end # module
 
