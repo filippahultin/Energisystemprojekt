@@ -44,13 +44,13 @@ inflow[:] = timeseries[:, "Hydro_inflow"]
     for r in REGION
         wind_cf[r, :]=timeseries[:, "Wind_"*"$r"]  
         pv_cf[r, :]=timeseries[:, "PV_"*"$r"]                                                     # 0-1, share of installed cap
-        load[r, :]=timeseries[:, "Load_"*"$r"]                                                           # [MWh]
+        load[r, :]=timeseries[:, "Load_"*"$r"]                                                       # [MWh]
     end
 
 myinf = 1e8
 maxcaptable = [                                                             # GW
         # PLANT         DE             SE              DK       
-        :Hydro          0              14              0       
+        :Hydro          0              14              0      
         :Gas            myinf          myinf           myinf      
         :Wind           180            280             90  
         :Solar          460            75              60
