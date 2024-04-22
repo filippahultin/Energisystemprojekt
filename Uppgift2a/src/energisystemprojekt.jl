@@ -46,11 +46,11 @@ function buildmodel(input)
 
     @constraints m begin
         CO2cap,
-            sum(Emissions[r, h] for r in REGION, h in HOUR) <= 5.5509779713876806*10^7 * 0.1
+            sum(Emissions[r, h] for r in REGION, h in HOUR) <= 1.3877444928469244*10^8 * 0.1
 
         Emission[r in REGION, h in HOUR],
             # The others don't pollute!
-            Emissions[r, h] >= Electricity[r, :Gas, h]*emis[:Gas]
+            Emissions[r, h] >= Electricity[r, :Gas, h]*emis[:Gas]/eff[:Gas]
 
         Generation[r in REGION, p in PLANT, h in HOUR],
             Electricity[r, p, h] <= Capacity[r, p] # * capacity factor

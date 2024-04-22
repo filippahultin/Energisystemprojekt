@@ -47,7 +47,7 @@ function buildmodel(input)
     @constraints m begin
         Emission[r in REGION, h in HOUR],
             # The others don't pollute!
-            Emissions[r, h] == Electricity[r, :Gas, h]*emis[:Gas]
+            Emissions[r, h] == Electricity[r, :Gas, h]*emis[:Gas]/eff[:Gas]
 
         Generation[r in REGION, p in PLANT, h in HOUR],
             Electricity[r, p, h] <= Capacity[r, p] # * capacity factor
