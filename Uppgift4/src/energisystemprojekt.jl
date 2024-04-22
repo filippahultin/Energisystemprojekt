@@ -15,7 +15,7 @@ module energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots, Revise
 
-export runmodel, plotresults, plotGermany, annualProdPlot
+export runmodel, plotresults, plotGermany, annualProdPlot, plotTransmission
 
 include("input_energisystemprojekt.jl")
 
@@ -215,7 +215,7 @@ function plotGermany(results)
     println(relevant_load)
 
     groupedbar(["Supply", "Supply", "Supply", "Supply", "Supply", "Supply", "Load"], [relevant_elec; transmission_elec; relevant_load],
-    group=types, bar_position = :stack, title="E3: Germany supply/demand")
+    group=types, bar_position = :stack, title="E4: Germany supply/demand")
 end
 
 function plotresults(results)
@@ -235,7 +235,7 @@ function plotresults(results)
     println(transmission_cap)
 
     groupedbar(ticklabel, [big_cap; transmission_cap], group=plantstr,
-            bar_position = :stack, title="E3: Total capacity")
+            bar_position = :stack, title="E4: Total capacity")
 end
 
 function annualProdPlot(results)
@@ -258,14 +258,21 @@ function annualProdPlot(results)
     println(transmission)
 
     groupedbar(ticklabel, [big_elec; batteries; transmission], group=plantstr,
-            bar_position = :stack, title="E3: Annual production")
+            bar_position = :stack, title="E4: Annual production")
 end
 
 function plotTransmission(results)
     @unpack m, Electricity_result, ElectricityBatteries_result, TransmissionElectricity_result, StorageBatteries_result, input = results
     @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
     
+    transm = ["SE", "DK", "DE", "DK", "DE", "SE"]
+    ticklabel = ["DE", "DE", "SE", "SE", "DK", "DK"]
+
     transm_elec = [sum(eff[:Transmission]*TransmissionElectricity_result[:DESE, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:DEDK, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:SEDE, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:SEDK, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:DKDE, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:DKSE, h] for h in HOUR)]
+
+    groupedbar(ticklabel, transm_elec, group=transm,
+                title="E4: Annual production")
+
 end
 
 end # module
