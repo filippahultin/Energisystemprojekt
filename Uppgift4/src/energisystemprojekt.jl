@@ -15,7 +15,7 @@ module energisystemprojekt
 
 using JuMP, AxisArrays, Gurobi, UnPack, StatsPlots, Revise
 
-export runmodel, plotresults, plotGermany, annualProdPlot, plotTransmission
+export runmodel, plotresults, plotGermany, annualProdPlot, plotTransmission, plotTransCap
 
 include("input_energisystemprojekt.jl")
 
@@ -271,8 +271,21 @@ function plotTransmission(results)
     transm_elec = [sum(eff[:Transmission]*TransmissionElectricity_result[:DESE, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:DEDK, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:SEDE, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:SEDK, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:DKDE, h] for h in HOUR), sum(eff[:Transmission]*TransmissionElectricity_result[:DKSE, h] for h in HOUR)]
 
     groupedbar(ticklabel, transm_elec, group=transm,
-                title="E4: Annual production")
+                title="E4: Transmitted electricity")
 
+end
+
+function plotTransCap(results)
+    @unpack m, Electricity_result, ElectricityBatteries_result, TransmissionCapacity_result, StorageBatteries_result, input = results
+    @unpack REGION, PLANT, REAL_PLANTS, HOUR, numregions, load, maxcap, inflow, disc, inv_cos, run_cos, fu_cos, eff, emis, wind_cf, pv_cf = input
+    
+    transm = ["SE", "DK", "DE", "DK", "DE", "SE"]
+    ticklabel = ["DE", "DE", "SE", "SE", "DK", "DK"]
+
+    trans_cap = [TransmissionCapacity_result[:SEDE], TransmissionCapacity_result[:DEDK], TransmissionCapacity_result[:SEDE], TransmissionCapacity_result[:SEDK], TransmissionCapacity_result[:DEDK], TransmissionCapacity_result[:SEDK]]
+
+    groupedbar(ticklabel, trans_cap, group=transm,
+                title="E4: Transmission capacity")
 end
 
 end # module
